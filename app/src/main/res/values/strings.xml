@@ -1,3 +1,17 @@
 <resources>
-    <string name="app_name">AndroidProjectDictaphone</string>
+    <!-- App -->
+    <string name="app_name">Dictaphone</string>
+
+    <!-- Activity -->
+    <!-- activity_main -->
+    <string name="welcome">Добро пожаловать!</string>
+    <string name="record_audio">Записать аудио</string>
+    <string name="play_audio">Воспроизвести аудио</string>
+
+    <!-- Sheets -->
+    <!-- sheet_voice_recording -->
+    <string name="sheet_voice_speak">Говорите</string>
+    <string name="sheet_voice_stop_recording">Остановить запись</string>
+
+
 </resources>
