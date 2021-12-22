@@ -56,7 +56,12 @@ public class FileManager {
         return dateString;
     }
 
-    public static File getFolderSave() {
+    public static File[] getListFile() {
+        File folder = getFolderSave();
+        return folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".ulaw"));
+    }
+
+    private static File getFolderSave() {
         return new File(pathFolderSave());
     }
 }
