@@ -11,4 +11,9 @@
     <!-- Custom color -->
     <!-- App -->
     <color name="material_blue">#4285F4</color>
+    <!-- image_view_equalization -->
+    <color name="black_super_light">#15000000</color>
+    <!-- Snackbar -->
+    <color name="light_green">#2e7d32</color>
+    <color name="light_red">#b71c1c</color>
 </resources>
