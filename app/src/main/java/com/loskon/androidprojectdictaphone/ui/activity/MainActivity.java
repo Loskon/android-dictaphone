@@ -1,45 +1,68 @@
 package com.loskon.androidprojectdictaphone.ui.activity;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.button.MaterialButton;
 import com.loskon.androidprojectdictaphone.R;
-import com.loskon.androidprojectdictaphone.request.ResultAccessAudio;
-import com.loskon.androidprojectdictaphone.request.ResultAccessAudioInterface;
-import com.loskon.androidprojectdictaphone.ui.sheets.BaseSheetDialog;
+import com.loskon.androidprojectdictaphone.audio.recorder.CallbackRecordingSuccess;
+import com.loskon.androidprojectdictaphone.audio.recorder.SoundRecorderThread;
+import com.loskon.androidprojectdictaphone.audio.track.CallbackFailedPlaying;
+import com.loskon.androidprojectdictaphone.audio.track.PlayingTrackThread;
+import com.loskon.androidprojectdictaphone.other.ColorManager;
+import com.loskon.androidprojectdictaphone.request.RequestResultInterface;
+import com.loskon.androidprojectdictaphone.request.RequestResults;
+import com.loskon.androidprojectdictaphone.ui.sheets.SheetListFiles;
 import com.loskon.androidprojectdictaphone.ui.sheets.SheetVoiceRecording;
+import com.loskon.androidprojectdictaphone.ui.snackbar.SnackbarControl;
 import com.loskon.androidprojectdictaphone.utils.OnSingleClickListener;
 
 /**
  * Основное окно с кнопками
  */
 
-public class MainActivity extends AppCompatActivity implements ResultAccessAudioInterface {
+public class MainActivity extends AppCompatActivity
+        implements RequestResultInterface, CallbackRecordingSuccess, CallbackFailedPlaying {
 
-    private final Context context = this;
+    private RequestResults requestResults;
 
+    private ConstraintLayout cstLayout;
     private MaterialButton btnRecord;
     private MaterialButton btnList;
+
+    private boolean isBtnRecord;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ColorManager.installAppColor(this);
         setContentView(R.layout.activity_main);
+
+        installCallbacks();
+        initObjects();
         contractRegistration();
         initViews();
         installHandlers();
     }
 
+    private void installCallbacks() {
+        PlayingTrackThread.listenerCallback(this);
+        SoundRecorderThread.listenerCallback(this);
+    }
+
+    private void initObjects() {
+        requestResults = new RequestResults(this, this);
+    }
+
     private void contractRegistration() {
-        ResultAccessAudio.installingVerification(this, this);
+        requestResults.installingVerificationPermissions();
     }
 
     private void initViews() {
+        cstLayout = findViewById(R.id.cst_layout);
         btnRecord = findViewById(R.id.btn_record);
         btnList = findViewById(R.id.btn_list);
     }
@@ -55,25 +78,76 @@ public class MainActivity extends AppCompatActivity implements ResultAccessAudio
         btnList.setOnClickListener(new OnSingleClickListener() {
             @Override
             public void onSingleClick(View view) {
-                new BaseSheetDialog(context).show();
+                performClickBtnList();
             }
         });
     }
 
     private void performClickBtnRecord() {
-        if (ResultAccessAudio.hasAccessAudio(this)) showSheetVoiceRecording();
+        SnackbarControl.close();
+
+        if (requestResults.hasAccessPermissions()) {
+            showSheetVoiceRecording();
+        } else {
+            isBtnRecord = true;
+        }
+    }
+
+    private void performClickBtnList() {
+        SnackbarControl.close();
+
+        if (requestResults.hasAccessPermissions()) {
+            showSheetListFiles();
+        } else {
+            isBtnRecord = false;
+        }
     }
 
     private void showSheetVoiceRecording() {
-        new SheetVoiceRecording(context).show();
+        new SheetVoiceRecording(this).show();
+    }
+
+    private void showSheetListFiles() {
+        new SheetListFiles(this).show();
     }
 
     @Override
-    public void onRequestAudioResult(boolean isGranted) {
+    public void onRequestResult(boolean isGranted) {
         if (isGranted) {
-            showSheetVoiceRecording();
+            if (isBtnRecord) {
+                showSheetVoiceRecording();
+            } else {
+                showSheetListFiles();
+            }
         } else {
-            Toast.makeText(this, "Нет доступа", Toast.LENGTH_SHORT).show();
+            makeSnackbar(R.string.sb_no_permissions, false);
         }
+    }
+
+    private void makeSnackbar(int stringId, boolean isSuccess) {
+        SnackbarControl.make(cstLayout, getString(stringId), isSuccess);
+    }
+
+    @Override
+    public void onFinishedRecording(boolean isSuccess) {
+        int stringId = getMessageForRecording(isSuccess);
+        makeSnackbar(stringId, isSuccess);
+    }
+
+    private int getMessageForRecording(boolean isSuccess) {
+        int stringId;
+
+        if (isSuccess) {
+            stringId = R.string.sb_successfully_saved;
+        } else {
+            stringId = R.string.sb_failed_record;
+        }
+
+        return stringId;
+    }
+
+    @Override
+    public void onFailedPlaying() {
+        makeSnackbar(R.string.sb_failed_play, false);
     }
 }
