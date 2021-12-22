@@ -13,6 +13,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.loskon.androidprojectdictaphone.R;
+import com.loskon.androidprojectdictaphone.utils.OnSingleClickListener;
+import com.loskon.androidprojectdictaphone.utils.WidgetUtils;
 
 /**
  * Единая форма для нижнего диалогового окна
@@ -31,8 +33,9 @@ public class BaseSheetDialog extends BottomSheetDialog {
     public BaseSheetDialog(@NonNull Context context) {
         super(context, R.style.SheetDialogRounded);
         this.context = context;
-        //settingsBehavior();
+        settingsBehavior();
         createContentView();
+        installHandlers();
     }
 
     private void settingsBehavior() {
@@ -43,32 +46,44 @@ public class BaseSheetDialog extends BottomSheetDialog {
 
     private void createContentView() {
         contentView = View.inflate(context, R.layout.base_sheet_dialog, null);
-
         tvTitle = contentView.findViewById(R.id.tv_base_dialog_title);
-        btnDialog = contentView.findViewById(R.id.btn_base_dialog_cancel);
+        btnDialog = contentView.findViewById(R.id.btn_base_dialog);
         linLayout = contentView.findViewById(R.id.container_base_dialog);
+    }
+
+    private void installHandlers() {
+        btnDialog.setOnClickListener(new OnSingleClickListener() {
+            @Override
+            public void onSingleClick(View view) {
+                cancel();
+            }
+        });
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(contentView);
-        //setCancelable(false);
     }
 
-
     public void setInsertView(View insertView) {
-        //insertView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        insertView.setLayoutParams(getLayoutParams());
         if (insertView.getParent() != null) linLayout.removeView(insertView);
         linLayout.addView(insertView);
+    }
+
+    private LinearLayout.LayoutParams getLayoutParams() {
+        int width = LinearLayout.LayoutParams.MATCH_PARENT;
+        int height = LinearLayout.LayoutParams.MATCH_PARENT;
+        return new LinearLayout.LayoutParams(width, height);
     }
 
     public void setTextTitle(int stringId) {
         tvTitle.setText(context.getString(stringId));
     }
 
-    public void setTextBtnDialog(int stringId) {
-        btnDialog.setText(context.getString(stringId));
+    public void setVisibilityBtnDialog(boolean isVisible) {
+        WidgetUtils.setVisibleView(btnDialog, isVisible);
     }
 
     public MaterialButton getBtnDialog() {
