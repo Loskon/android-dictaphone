@@ -4,30 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:id="@+id/lin_layout_files"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_files"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_marginTop="16dp"
-        android:orientation="vertical"
+        android:layout_height="260dp"
+        android:background="@android:color/transparent"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:paddingStart="14dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="14dp"
         android:paddingBottom="16dp"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_files"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:cacheColorHint="@android:color/transparent"
-            android:divider="@android:color/transparent"
-            android:scrollbars="vertical"
-            android:scrollbarStyle="outsideOverlay"
-            android:dividerHeight="0dp"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp" />
-    </LinearLayout>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_empty_list_files"
@@ -36,9 +29,9 @@
         android:layout_margin="8dp"
         android:gravity="center"
         android:text="@string/sheet_list_empty"
-        app:layout_constraintBottom_toBottomOf="@+id/lin_layout_files"
+        app:layout_constraintBottom_toBottomOf="@+id/recycler_view_files"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/lin_layout_files" />
+        app:layout_constraintTop_toTopOf="@+id/recycler_view_files" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
