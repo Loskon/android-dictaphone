@@ -18,7 +18,7 @@
 
 <div align="center">
    
-| <img src="screenshots/screen1.jpg" width="250"> | <img src="screenshots/screen2.jpg" width="250"> | <img src="screenshots/screen3.jpg" width="250"> |
+| <img src="screenshots/Screen1.jpg" width="250"> | <img src="screenshots/Screen2.jpg" width="250"> | <img src="screenshots/Screen3.jpg" width="250"> |
 | :---------------------------------------------: | :---------------------------------------------: | :---------------------------------------------: |
 | Основное окно                                   | Окно для записи                                 | Окно со списоком файлов                         |
    
