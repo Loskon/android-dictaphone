@@ -21,18 +21,17 @@ public class SnackbarControl {
 
     public static void make(ViewGroup parent, String message, boolean isSuccess) {
         snackbar = Snackbar.make(parent, message, Snackbar.LENGTH_LONG);
-
-        View snackbarView = snackbar.getView();
-        snackbarView.setBackgroundResource(R.drawable.snackbar_background);
-        snackbarView.setBackgroundTintList(getSuccessColor(parent.getContext(), isSuccess));
-        snackbarView.setOnClickListener(v -> snackbar.dismiss());
-
-        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) snackbarView.getLayoutParams();
-        params.gravity = Gravity.TOP;
-        snackbarView.setLayoutParams(params);
-
+        configureSnackbarView(parent.getContext(), isSuccess);
         snackbar.setTextColor(Color.WHITE);
         snackbar.show();
+    }
+
+    private static void configureSnackbarView(Context context, boolean isSuccess) {
+        View snackbarView = snackbar.getView();
+        snackbarView.setBackgroundResource(R.drawable.snackbar_background);
+        snackbarView.setBackgroundTintList(getSuccessColor(context, isSuccess));
+        snackbarView.setLayoutParams(getParams(snackbarView));
+        snackbarView.setOnClickListener(v -> snackbar.dismiss());
     }
 
     private static ColorStateList getSuccessColor(Context context, boolean isSuccess) {
@@ -47,9 +46,13 @@ public class SnackbarControl {
         return ColorStateList.valueOf(context.getResources().getColor(color));
     }
 
-    public static void close() {
-        if (snackbar != null) {
-            snackbar.dismiss();
-        }
+    private static FrameLayout.LayoutParams getParams(View view) {
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
+        params.gravity = Gravity.TOP;
+        return params;
+    }
+
+    public static void dismiss() {
+        if (snackbar != null) snackbar.dismiss();
     }
 }
