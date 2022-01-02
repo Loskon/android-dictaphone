@@ -14,6 +14,16 @@
 
 3. Формат записываемого файла - G711.u (PCM-ulaw).
 
+## Скриншоты
+
+<div align="center">
+   
+| <img src="screenshots/screen1.jpg" width="250"> | <img src="screenshots/screen2.jpg" width="250"> | <img src="screenshots/screen3.jpg" width="250"> |
+| :---------------------------------------------: | :---------------------------------------------: | :---------------------------------------------: |
+| Основное окно                                   | Окно для записи                                 | Окно со списоком файлов                         |
+   
+</div>
+
 ## Контакты <a name="paragraph3"></a>
 
 [![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/loskon)
