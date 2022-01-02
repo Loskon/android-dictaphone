@@ -17,26 +17,27 @@ import java.util.Map;
 
 /**
  * Регистрация, получение и обработка результатов контракта
+ * для получения разрешений на доступ к памяти и микрофону
  */
 
-public class RequestResults {
-
-    private final ComponentActivity activity;
-    private final RequestResultInterface resultInterface;
-
-    private ActivityResultLauncher<String[]> resultLauncherArray; // For Android < 30
-    private ActivityResultLauncher<String> resultLauncher; // For Android >= 30
+public class RequestPermissions {
 
     private static final String[] PERMISSIONS = new String[]
             {RECORD_AUDIO, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE};
 
-    public RequestResults(ComponentActivity activity, RequestResultInterface resultInterface) {
+    private final ComponentActivity activity;
+    private final RequestResultInterface resultInterface;
+
+    private ActivityResultLauncher<String[]> resultLauncher; // API < 30
+    private ActivityResultLauncher<String> resultLauncherAndroidR; // API >= 30
+
+    public RequestPermissions(ComponentActivity activity, RequestResultInterface resultInterface) {
         this.activity = activity;
         this.resultInterface = resultInterface;
     }
 
     // Verification
-    public void installingVerificationPermissions() {
+    public void installingContracts() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             installingVerificationAndroidR();
         } else {
@@ -45,13 +46,13 @@ public class RequestResults {
     }
 
     public void installingVerificationAndroidR() {
-        resultLauncher = activity.registerForActivityResult(
+        resultLauncherAndroidR = activity.registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
                 (ActivityResultCallback<Boolean>) resultInterface::onRequestResult);
     }
 
     public void installingVerification() {
-        resultLauncherArray = activity.registerForActivityResult(
+        resultLauncher = activity.registerForActivityResult(
                 new ActivityResultContracts.RequestMultiplePermissions(),
                 this::requestResultsProcessing);
     }
@@ -71,30 +72,30 @@ public class RequestResults {
     }
 
     // Access
-    public boolean hasAccessPermissions() {
+    public boolean hasAccess() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            return hasAccessPermissionAndroidR();
+            return hasNecessaryPermissionsAndroidR();
         } else {
-            return hasAccessPermission();
+            return hasNecessaryPermissions();
         }
     }
 
-    public boolean hasAccessPermissionAndroidR() {
-        boolean isGrantedAccess = false;
+    public boolean hasNecessaryPermissionsAndroidR() {
+        boolean hasPermissions = false;
 
         int audio = ActivityCompat.checkSelfPermission(activity, RECORD_AUDIO);
 
         if (audio == PERMISSION_GRANTED) {
-            isGrantedAccess = true;
+            hasPermissions = true;
         } else {
             requestAccessAudio();
         }
 
-        return isGrantedAccess;
+        return hasPermissions;
     }
 
-    public boolean hasAccessPermission() {
-        boolean isGrantedAccess = false;
+    public boolean hasNecessaryPermissions() {
+        boolean hasPermissions = false;
 
         int audio = ActivityCompat.checkSelfPermission(activity, RECORD_AUDIO);
         int read = ActivityCompat.checkSelfPermission(activity, READ_EXTERNAL_STORAGE);
@@ -103,20 +104,20 @@ public class RequestResults {
         int permGranted = PERMISSION_GRANTED;
 
         if (audio == permGranted && read == permGranted && write == permGranted) {
-            isGrantedAccess = true;
+            hasPermissions = true;
         } else {
             requestPermissions();
         }
 
-        return isGrantedAccess;
+        return hasPermissions;
     }
 
     // Launcher
-    public void requestPermissions() {
-        resultLauncherArray.launch(PERMISSIONS);
+    public void requestAccessAudio() {
+        resultLauncherAndroidR.launch(RECORD_AUDIO);
     }
 
-    public void requestAccessAudio() {
-        resultLauncher.launch(RECORD_AUDIO);
+    public void requestPermissions() {
+        resultLauncher.launch(PERMISSIONS);
     }
 }

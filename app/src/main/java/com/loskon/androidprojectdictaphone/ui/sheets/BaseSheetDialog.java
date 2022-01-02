@@ -13,8 +13,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.loskon.androidprojectdictaphone.R;
-import com.loskon.androidprojectdictaphone.utils.OnSingleClickListener;
-import com.loskon.androidprojectdictaphone.utils.WidgetUtils;
+import com.loskon.androidprojectdictaphone.utils.OnSingleClick;
+import com.loskon.androidprojectdictaphone.utils.Utils;
 
 /**
  * Единая форма для нижнего диалогового окна
@@ -31,7 +31,7 @@ public class BaseSheetDialog extends BottomSheetDialog {
     private View contentView;
 
     public BaseSheetDialog(@NonNull Context context) {
-        super(context, R.style.SheetDialogRounded);
+        super(context, R.style.RoundedSheetDialog);
         this.context = context;
         settingsBehavior();
         createContentView();
@@ -52,18 +52,14 @@ public class BaseSheetDialog extends BottomSheetDialog {
     }
 
     private void installHandlers() {
-        btnDialog.setOnClickListener(new OnSingleClickListener() {
-            @Override
-            public void onSingleClick(View view) {
-                cancel();
-            }
-        });
+        btnDialog.setOnClickListener(new OnSingleClick(v -> cancel()));
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(contentView);
+        settingsBehavior();
     }
 
     public void setInsertView(View insertView) {
@@ -83,7 +79,7 @@ public class BaseSheetDialog extends BottomSheetDialog {
     }
 
     public void setVisibilityBtnDialog(boolean isVisible) {
-        WidgetUtils.setVisibleView(btnDialog, isVisible);
+        Utils.setVisibleView(btnDialog, isVisible);
     }
 
     public MaterialButton getBtnDialog() {

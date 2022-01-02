@@ -1,7 +1,5 @@
 package com.loskon.androidprojectdictaphone.ui.recyclerview;
 
-import static java.util.Collections.emptyList;
-
 import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.loskon.androidprojectdictaphone.R;
-import com.loskon.androidprojectdictaphone.files.SortFileDate;
-import com.loskon.androidprojectdictaphone.utils.OnSingleClickListener;
+import com.loskon.androidprojectdictaphone.utils.OnSingleClick;
 
 import java.io.File;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,7 +20,7 @@ import java.util.List;
 
 public class FilesAdapter extends RecyclerView.Adapter<FileViewHolder> {
 
-    private List<File> files = emptyList();
+    private List<File> files;
 
     private int lastCheckedPosition = -1;
 
@@ -40,22 +36,17 @@ public class FilesAdapter extends RecyclerView.Adapter<FileViewHolder> {
     public void onBindViewHolder(@NonNull FileViewHolder holder, int position) {
         File file = files.get(position);
 
-        String fileName = file.getName().replace(".ulaw", "");
-        holder.nameFiles.setText(fileName);
-
+        holder.nameFiles.setText(getFileName(file));
         holder.radioButton.setChecked(position == lastCheckedPosition);
+        holder.cardView.setOnClickListener(new OnSingleClick(v -> clickingCardView(file, holder)));
+    }
 
-        holder.cardView.setOnClickListener(new OnSingleClickListener() {
-            @Override
-            public void onSingleClick(View view) {
-                clickingCardView(file, holder);
-            }
-        });
+    private String getFileName(File file) {
+        return file.getName().replace(".ulaw", "");
     }
 
     public void setFilesList(List<File> files) {
         this.files = files;
-        Collections.sort(files, new SortFileDate());
         checkEmptyFilesList();
         updateChangedList();
     }
@@ -72,23 +63,23 @@ public class FilesAdapter extends RecyclerView.Adapter<FileViewHolder> {
 
     private void checkEmptyFilesList() {
         boolean hasEmpty = (files.size() == 0);
-        if (callback != null) callback.onListEmpty(hasEmpty);
+        if (callback != null) callback.checkEmptyList(hasEmpty);
     }
 
     private void clickingCardView(File file, RecyclerView.ViewHolder holder) {
         lastCheckedPosition = holder.getAdapterPosition();
         notifyItemRangeChanged(0, getItemCount());
-        if (callback != null) callback.onClickingFile(file);
+        if (callback != null) callback.onClickFile(file);
     }
 
-    public void resetPlayIcon() {
+    public void hidePlayIcon() {
         lastCheckedPosition = -1;
         notifyItemRangeChanged(0, getItemCount());
     }
 
-    private static CallbackAdapter callback;
+    private static FilesAdapterCallback callback;
 
-    public static void listenerCallback(CallbackAdapter callback) {
+    public static void listenerCallback(FilesAdapterCallback callback) {
         FilesAdapter.callback = callback;
     }
 }

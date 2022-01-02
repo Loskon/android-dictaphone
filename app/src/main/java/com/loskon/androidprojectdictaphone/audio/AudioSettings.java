@@ -1,15 +1,12 @@
 package com.loskon.androidprojectdictaphone.audio;
 
 import android.media.AudioFormat;
-import android.media.AudioRecord;
 
 /**
- * Звуковые настройки
+ * Общие звуковые настройки для AudioRecord и AudioTrack
  */
 
 public class AudioSettings {
-    public final int sampleRate = 8000 ; // 44100
-    public final int format = AudioFormat.ENCODING_PCM_16BIT;
-    public final int channel = AudioFormat.CHANNEL_IN_MONO;
-    public final int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channel, format);
+    public static final int SAMPLE_RATE = 8000 ; // 44100
+    public static final int AUDIO_FORMAT = AudioFormat.ENCODING_PCM_16BIT;
 }

@@ -11,19 +11,17 @@ import java.util.Date;
  * Работа с файлами и папками
  */
 
-public class FileManager {
+public class FileHelper {
 
     public static File createAudioFile(Date date) throws IOException {
         String path = pathFolderSave();
         File file = new File(path);
 
-        boolean hasFileCreated = hasFolderCreated(file);
-
-        if (hasFileCreated) {
+        if (hasFolderCreated(file)) {
             String name = getNowDateStringForTitle(date) + ".ulaw";
             return new File(path, name);
         } else {
-            throw new IOException("Невозможно создать файл");
+            throw new IOException("Unable to create a file");
         }
     }
 
@@ -35,13 +33,13 @@ public class FileManager {
     }
 
     private static boolean hasFolderCreated(File file) {
-        boolean hasFileCreated = true;
+        boolean hasCreated = true;
 
         if (!file.exists()) {
-            hasFileCreated = file.mkdirs();
+            hasCreated = file.mkdirs();
         }
 
-        return hasFileCreated;
+        return hasCreated;
     }
 
     private static String getNowDateStringForTitle(Date date) {
@@ -50,15 +48,14 @@ public class FileManager {
         return replaceForbiddenCharacters(dateNowString);
     }
 
-    private static String replaceForbiddenCharacters(String dateString) {
-        dateString = dateString.replace("/", ".");
-        dateString = dateString.replace(":", "_");
-        return dateString;
+    private static String replaceForbiddenCharacters(String string) {
+        string = string.replace("/", ".");
+        string = string.replace(":", ".");
+        return string;
     }
 
-    public static File[] getListFile() {
-        File folder = getFolderSave();
-        return folder.listFiles((dir, name) -> name.toLowerCase().endsWith(".ulaw"));
+    public static File[] getFiles() {
+        return getFolderSave().listFiles((dir, name) -> name.toLowerCase().endsWith(".ulaw"));
     }
 
     private static File getFolderSave() {

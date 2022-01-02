@@ -3,7 +3,7 @@ package com.loskon.androidprojectdictaphone.audio.recorder;
 import android.media.AudioRecord;
 import android.os.Process;
 
-import com.loskon.androidprojectdictaphone.files.FileManager;
+import com.loskon.androidprojectdictaphone.files.FileHelper;
 import com.loskon.androidprojectdictaphone.ulaw.EncodingOutputStream;
 
 import java.io.File;
@@ -38,7 +38,7 @@ public class SoundRecorderThread extends Thread {
 
             recorder.startRecording();
 
-            File file = FileManager.createAudioFile(dateStartRecording);
+            File file = FileHelper.createAudioFile(dateStartRecording);
             FileOutputStream outputStream = new FileOutputStream(file);
             EncodingOutputStream encodingStream = new EncodingOutputStream(outputStream);
 
@@ -52,10 +52,10 @@ public class SoundRecorderThread extends Thread {
             outputStream.close();
             encodingStream.close();
 
-            if (callback != null && !hasRecordingAudio) callback.onFinishedRecording(true);
+            if (callback != null && !hasRecordingAudio) callback.finishingRecording();
         } catch (Exception exception) {
             exception.printStackTrace();
-            if (callback != null) callback.onFinishedRecording(false);
+            if (callback != null) callback.failedRecording();
         }
     }
 
@@ -70,9 +70,9 @@ public class SoundRecorderThread extends Thread {
         interrupt();
     }
 
-    private static CallbackRecordingSuccess callback;
+    private static RecorderCallback callback;
 
-    public static void listenerCallback(CallbackRecordingSuccess callback) {
+    public static void registerCallback(RecorderCallback callback) {
         SoundRecorderThread.callback = callback;
     }
 }

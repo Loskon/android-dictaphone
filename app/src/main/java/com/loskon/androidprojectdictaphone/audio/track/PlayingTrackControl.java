@@ -2,7 +2,6 @@ package com.loskon.androidprojectdictaphone.audio.track;
 
 import android.media.AudioFormat;
 import android.media.AudioManager;
-import android.media.AudioRecord;
 import android.media.AudioTrack;
 
 import com.loskon.androidprojectdictaphone.audio.AudioSettings;
@@ -24,26 +23,28 @@ public class PlayingTrackControl extends AudioSettings {
 
     private void initAudioTrack() {
         int streamType = AudioManager.STREAM_MUSIC;
-        int channelConfig = AudioFormat.CHANNEL_OUT_MONO;
-        int minBufSize = AudioRecord.getMinBufferSize(sampleRate, channel, format);
-        int recordBufSize = minBufSize * 10;
+        int sampleRate = AudioSettings.SAMPLE_RATE;
+        int channel = AudioFormat.CHANNEL_OUT_MONO;
+        int format = AudioSettings.AUDIO_FORMAT;
+        int minBufSize = AudioTrack.getMinBufferSize(sampleRate, channel, format);
+        int internalBufferSize = minBufSize * 10;
         int mode = AudioTrack.MODE_STREAM;
 
-        track = new AudioTrack(streamType, sampleRate, channelConfig, format, recordBufSize, mode);
+        track = new AudioTrack(streamType, sampleRate, channel, format, internalBufferSize, mode);
     }
 
-
     public void startRecording(File file) {
-        stopRecording();
         initTrackingThread();
-        thread.startRecording(file);
+        thread.setFileToPlay(file);
+        thread.startRecording();
     }
 
     private void initTrackingThread() {
+        stopPlaying();
         thread = new PlayingTrackThread(track);
     }
 
-    public void stopRecording() {
-        if (thread != null) thread.stopRecording();
+    public void stopPlaying() {
+        if (thread != null) thread.stopPlaying();
     }
 }

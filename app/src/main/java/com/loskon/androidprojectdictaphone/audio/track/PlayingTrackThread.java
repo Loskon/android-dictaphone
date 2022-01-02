@@ -45,33 +45,36 @@ public class PlayingTrackThread extends Thread {
 
             inputStream.close();
             decodingInputStream.close();
-            if (finishedPlaying != null && hasPlayingTrack) finishedPlaying.onFinishedPlaying();
+            if (listCallback != null && hasPlayingTrack) listCallback.finishedPlaying();
         } catch (Exception exception) {
             exception.printStackTrace();
-            if (failedPlaying != null) failedPlaying.onFailedPlaying();
+            if (trackCallback != null) trackCallback.failedPlaying();
         }
     }
 
-    public void startRecording(File file) {
+    public void setFileToPlay(File file) {
         this.file = file;
+    }
+
+    public void startRecording() {
         hasPlayingTrack = true;
         start();
     }
 
-    public void stopRecording() {
+    public void stopPlaying() {
         hasPlayingTrack = false;
         track.stop();
         interrupt();
     }
 
-    private static CallbackFinishedPlaying finishedPlaying;
-    private static CallbackFailedPlaying failedPlaying;
+    private static TrackListCallback listCallback;
+    private static TrackCallback trackCallback;
 
-    public static void listenerCallback(CallbackFinishedPlaying finishedPlaying) {
-        PlayingTrackThread.finishedPlaying = finishedPlaying;
+    public static void registerCallback(TrackListCallback finishedPlaying) {
+        PlayingTrackThread.listCallback = finishedPlaying;
     }
 
-    public static void listenerCallback(CallbackFailedPlaying playingSuccess) {
-        PlayingTrackThread.failedPlaying = playingSuccess;
+    public static void registerCallback(TrackCallback playingSuccess) {
+        PlayingTrackThread.trackCallback = playingSuccess;
     }
 }
