@@ -1,6 +1,6 @@
 <resources>
     <!-- App -->
-    <string name="app_name">Dictaphone</string>
+    <string name="app_name">Диктофон</string>
 
     <!-- Activity -->
     <string name="welcome">Добро пожаловать!</string>
