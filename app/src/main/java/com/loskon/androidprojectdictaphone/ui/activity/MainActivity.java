@@ -19,7 +19,7 @@ import com.loskon.androidprojectdictaphone.ui.snackbar.SnackbarControl;
 import com.loskon.androidprojectdictaphone.utils.OnSingleClick;
 
 /**
- * Основное окно с кнопками
+ * Основное окно с кнопками для записи и показа списка записанных файлов
  */
 
 public class MainActivity extends AppCompatActivity
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void installCallbacks() {
-        PlayingTrackThread.registerCallback(this);
+        PlayingTrackThread.registerTrackCallback(this);
         SoundRecorderThread.registerCallback(this);
     }
 

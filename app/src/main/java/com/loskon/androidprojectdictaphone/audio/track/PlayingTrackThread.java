@@ -70,11 +70,11 @@ public class PlayingTrackThread extends Thread {
     private static TrackListCallback listCallback;
     private static TrackCallback trackCallback;
 
-    public static void registerCallback(TrackListCallback finishedPlaying) {
+    public static void registerTrackListCallback(TrackListCallback finishedPlaying) {
         PlayingTrackThread.listCallback = finishedPlaying;
     }
 
-    public static void registerCallback(TrackCallback playingSuccess) {
+    public static void registerTrackCallback(TrackCallback playingSuccess) {
         PlayingTrackThread.trackCallback = playingSuccess;
     }
 }

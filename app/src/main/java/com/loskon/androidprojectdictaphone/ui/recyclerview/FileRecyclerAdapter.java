@@ -18,9 +18,11 @@ import java.util.List;
  * Адаптер для работы со списком файлов
  */
 
-public class FilesAdapter extends RecyclerView.Adapter<FileViewHolder> {
+public class FileRecyclerAdapter extends RecyclerView.Adapter<FileViewHolder> {
 
-    private List<File> files;
+    private FileClickListener clickListener;
+
+    private List<File> list;
 
     private int lastCheckedPosition = -1;
 
@@ -33,22 +35,38 @@ public class FilesAdapter extends RecyclerView.Adapter<FileViewHolder> {
     }
 
     @Override
+    public int getItemCount() {
+        return list.size();
+    }
+
+    @Override
     public void onBindViewHolder(@NonNull FileViewHolder holder, int position) {
-        File file = files.get(position);
+        File file = list.get(position);
 
         holder.nameFiles.setText(getFileName(file));
         holder.radioButton.setChecked(position == lastCheckedPosition);
-        holder.cardView.setOnClickListener(new OnSingleClick(v -> clickingCardView(file, holder)));
+        holder.cardView.setOnClickListener(new OnSingleClick(v -> onItemClick(file, holder)));
     }
 
     private String getFileName(File file) {
         return file.getName().replace(".ulaw", "");
     }
 
-    public void setFilesList(List<File> files) {
-        this.files = files;
+    private void onItemClick(File file, RecyclerView.ViewHolder holder) {
+        lastCheckedPosition = holder.getAdapterPosition();
+        notifyItemRangeChanged(0, getItemCount());
+        clickListener.onClickFile(file);
+    }
+
+    //----------------------------------------------------------------------------------------------
+    public void setFilesList(List<File> newList) {
+        list = newList;
         checkEmptyFilesList();
         updateChangedList();
+    }
+
+    private void checkEmptyFilesList() {
+        clickListener.checkEmptyList(list.size() == 0);
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -56,30 +74,14 @@ public class FilesAdapter extends RecyclerView.Adapter<FileViewHolder> {
         notifyDataSetChanged();
     }
 
-    @Override
-    public int getItemCount() {
-        return files.size();
-    }
-
-    private void checkEmptyFilesList() {
-        boolean hasEmpty = (files.size() == 0);
-        if (callback != null) callback.checkEmptyList(hasEmpty);
-    }
-
-    private void clickingCardView(File file, RecyclerView.ViewHolder holder) {
-        lastCheckedPosition = holder.getAdapterPosition();
-        notifyItemRangeChanged(0, getItemCount());
-        if (callback != null) callback.onClickFile(file);
-    }
-
+    //----------------------------------------------------------------------------------------------
     public void hidePlayIcon() {
         lastCheckedPosition = -1;
         notifyItemRangeChanged(0, getItemCount());
     }
 
-    private static FilesAdapterCallback callback;
-
-    public static void listenerCallback(FilesAdapterCallback callback) {
-        FilesAdapter.callback = callback;
+    //----------------------------------------------------------------------------------------------
+    public void registerFileClickListener(FileClickListener clickListener) {
+        this.clickListener = clickListener;
     }
 }

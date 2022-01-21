@@ -15,8 +15,8 @@ import com.loskon.androidprojectdictaphone.audio.track.PlayingTrackThread;
 import com.loskon.androidprojectdictaphone.audio.track.TrackListCallback;
 import com.loskon.androidprojectdictaphone.files.FileHelper;
 import com.loskon.androidprojectdictaphone.files.SortFileDate;
-import com.loskon.androidprojectdictaphone.ui.recyclerview.FilesAdapter;
-import com.loskon.androidprojectdictaphone.ui.recyclerview.FilesAdapterCallback;
+import com.loskon.androidprojectdictaphone.ui.recyclerview.FileClickListener;
+import com.loskon.androidprojectdictaphone.ui.recyclerview.FileRecyclerAdapter;
 import com.loskon.androidprojectdictaphone.utils.OnSingleClick;
 import com.loskon.androidprojectdictaphone.utils.Utils;
 
@@ -30,14 +30,14 @@ import java.util.List;
  */
 
 public class ListFilesSheetDialog extends BaseSheetDialog
-        implements FilesAdapterCallback, TrackListCallback {
+        implements FileClickListener, TrackListCallback {
 
     private final Context context;
 
     private RecyclerView recyclerView;
     private TextView tvEmpty;
 
-    private final FilesAdapter adapter = new FilesAdapter();
+    private final FileRecyclerAdapter adapter = new FileRecyclerAdapter();
     private final PlayingTrackControl trackControl = new PlayingTrackControl();
 
     public ListFilesSheetDialog(Context context) {
@@ -48,15 +48,15 @@ public class ListFilesSheetDialog extends BaseSheetDialog
     public void show() {
         installCallbacks();
         configureDialogViews();
+        configureRecyclerAdapter();
         configureRecyclerView();
         updateFilesList();
-        installHandlers();
+        installHandlersForViews();
         super.show();
     }
 
     private void installCallbacks() {
-        FilesAdapter.listenerCallback(this);
-        PlayingTrackThread.registerCallback(this);
+        PlayingTrackThread.registerTrackListCallback(this);
     }
 
     private void configureDialogViews() {
@@ -69,6 +69,10 @@ public class ListFilesSheetDialog extends BaseSheetDialog
         recyclerView = view.findViewById(R.id.recycler_view_files);
         tvEmpty = view.findViewById(R.id.tv_empty_list_files);
         setInsertView(view);
+    }
+
+    private void configureRecyclerAdapter() {
+        adapter.registerFileClickListener(this);
     }
 
     private void configureRecyclerView() {
@@ -95,7 +99,7 @@ public class ListFilesSheetDialog extends BaseSheetDialog
         return listFiles;
     }
 
-    private void installHandlers() {
+    private void installHandlersForViews() {
         getBtnDialog().setOnClickListener(new OnSingleClick(v -> dialogCancel()));
         setOnCancelListener(dialogInterface -> stopTracking());
     }
@@ -109,6 +113,7 @@ public class ListFilesSheetDialog extends BaseSheetDialog
         trackControl.stopPlaying();
     }
 
+    //----------------------------------------------------------------------------------------------
     @Override
     public void onClickFile(File file) {
         trackControl.startRecording(file);
@@ -122,5 +127,16 @@ public class ListFilesSheetDialog extends BaseSheetDialog
     @Override
     public void finishedPlaying() {
         adapter.hidePlayIcon();
+    }
+
+    //----------------------------------------------------------------------------------------------
+    @Override
+    protected void onStop() {
+        removeCallback();
+        super.onStop();
+    }
+
+    private void removeCallback() {
+        PlayingTrackThread.registerTrackCallback(null);
     }
 }

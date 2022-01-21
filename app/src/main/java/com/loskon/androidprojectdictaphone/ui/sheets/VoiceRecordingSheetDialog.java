@@ -27,7 +27,7 @@ public class VoiceRecordingSheetDialog extends BaseSheetDialog {
 
     public void show() {
         configureDialogViews();
-        installHandlers();
+        installHandlersForViews();
         startRecording();
         super.show();
     }
@@ -44,7 +44,7 @@ public class VoiceRecordingSheetDialog extends BaseSheetDialog {
         setInsertView(view);
     }
 
-    private void installHandlers() {
+    private void installHandlersForViews() {
         btnStopRecording.setOnClickListener(new OnSingleClick(v -> dialogCancel()));
         setOnCancelListener(dialogInterface -> stopRecording());
     }
