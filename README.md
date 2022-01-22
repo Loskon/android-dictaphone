@@ -1,4 +1,4 @@
-# Dictaphone for Android (test project)    
+# Диктофон (test project)    
 
 Приложение представляет собоой диктофон с использованием аудикодека [G.711.u] (PCM-ulaw).
 
